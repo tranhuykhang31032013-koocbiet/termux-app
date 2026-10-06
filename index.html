@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#0e1013">
+<title>Workspace X</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header id="top">
+  <button class="ib" id="bMenu" aria-label="Vị trí nhanh">☰</button>
+  <div><b id="path">/</b><small id="info"></small></div>
+  <button class="ib" id="bMore" aria-label="Thêm">⋮</button>
+</header>
+
+<main id="panes">
+  <section class="pane" id="p0"><div class="list" id="l0"></div></section>
+  <section class="pane" id="p1"><div class="list" id="l1"></div></section>
+</main>
+
+<nav class="tb hide" id="acts">
+  <button data-a="all"><i>☑</i>Tất cả</button>
+  <button data-a="cp"><i>📋</i>Chép</button>
+  <button data-a="mv"><i>✂️</i>Chuyển</button>
+  <button data-a="rn"><i>✏️</i>Tên</button>
+  <button data-a="rm"><i>🗑</i>Xoá</button>
+  <button data-a="gp"><i>📄</i>Gộp</button>
+  <button data-a="x"><i>✕</i>Bỏ chọn</button>
+</nav>
+<nav class="tb" id="nav">
+  <button id="bBack" aria-label="Lùi">‹</button>
+  <button id="bFwd" aria-label="Tiến">›</button>
+  <button id="bAdd" aria-label="Tạo mới">＋</button>
+  <button id="bSwap" aria-label="Đổi ngăn">⇄</button>
+  <button id="bUp" aria-label="Lên một cấp">↑</button>
+</nav>
+
+<input type="file" id="fileIn" multiple hidden>
+<input type="file" id="dirIn" webkitdirectory multiple hidden>
+
+<dialog id="dlg"><form method="dialog">
+  <b id="dlgT"></b>
+  <input id="dlgIn" autocomplete="off" autocapitalize="off" spellcheck="false">
+  <div class="row2"><button type="button" class="btn ghost" onclick="this.closest('dialog').close()">Huỷ</button><button value="ok" class="btn primary">OK</button></div>
+</form></dialog>
+
+<dialog id="sheet"></dialog>
+
+<dialog id="view">
+  <b id="vT"></b>
+  <pre id="vB"></pre>
+  <div class="row2"><button class="btn" id="vCopy">Sao chép</button><button class="btn primary" onclick="this.closest('dialog').close()">Đóng</button></div>
+</dialog>
+
+<dialog id="merge"><form method="dialog">
+  <b id="mInfo"></b>
+  <textarea id="mBody" readonly></textarea>
+  <div class="row2"><button type="button" class="btn" id="mCopy">Sao chép</button><button type="button" class="btn" id="mHere">Lưu tại đây</button><button type="button" class="btn" id="mDl">Tải .txt</button><button class="btn primary">Đóng</button></div>
+</form></dialog>
+
+<dialog id="termDlg">
+  <div id="term"></div>
+  <div id="xk"><button data-k="tab">Tab</button><button data-k="c">^C</button><button data-k="d">^D</button><button data-k="up">↑</button><button data-k="dn">↓</button></div>
+  <form id="cmdForm"><span>$</span><input id="cmd" placeholder="help" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send"><button type="button" class="btn ghost" onclick="this.closest('dialog').close()">✕</button></form>
+</dialog>
+
+<div id="toast" role="status"></div>
+
+<script src="./fileSystem.js"></script>
+<script src="./terminalCore.js"></script>
+<script src="./vfs.js"></script>
+<script src="./commands.js"></script>
+<script src="./api.js"></script>
+<script src="./shell.js"></script>
+<script src="./fm.js"></script>
+<script src="./fm2.js"></script>
+</body>
+</html>
