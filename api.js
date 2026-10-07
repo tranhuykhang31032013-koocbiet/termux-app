@@ -49,7 +49,7 @@ const api = {
         try { await sh.bridge.connect(u, tk); break; }
         catch (e) {
           if (!apk) throw e;
-          if (i > 14) throw new Error('Termux không phản hồi — đã cài nodejs, bật allow-external-apps, cấp quyền Run commands chưa?');
+          if (i > 14) throw new Error('Bridge không phản hồi — xem log: ~/.wx/bridge.log (cần Node.js: pkg install nodejs)');
           if (!i) { const m = WXT.start(); if (m) throw new Error(m); c.out('Đang bật bridge trong Termux…\n'); }
           await new Promise(r => setTimeout(r, 800));
         }
