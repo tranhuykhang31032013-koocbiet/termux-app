@@ -64,3 +64,25 @@ dialog input,dialog textarea{padding:.6rem;border-radius:8px;border:1px solid va
 #toast{position:fixed;left:50%;bottom:calc(5.5rem + env(safe-area-inset-bottom));transform:translate(-50%,400%);max-width:90vw;background:#238636;color:#fff;padding:.5rem 1rem;border-radius:20px;transition:transform .3s;pointer-events:none;z-index:99}
 #toast.show{transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ── Giao diện mượt hơn ── */
+:root{--ac:#5aa9ff;--bg:#1d1f23;--bar:#14161a;--r:14px}
+#top{background:linear-gradient(180deg,#1b1e24,var(--bar));box-shadow:0 1px 14px rgba(0,0,0,.35);position:relative;z-index:2}
+.ib,.tb button,.btn{transition:transform .12s ease,background .18s,filter .18s;border-radius:12px}
+.ib:active,.tb button:active,.btn:active{transform:scale(.92);background:var(--hv)}
+.btn.primary{background:linear-gradient(135deg,#5aa9ff,#7c6cff);border:0;color:#fff;box-shadow:0 4px 14px -4px rgba(90,169,255,.7)}
+.row{transition:background .15s,transform .12s,box-shadow .2s;border-radius:10px;margin:1px 4px}
+.row:active{transform:scale(.985);background:var(--hv)}
+.row.sel{background:var(--hv);box-shadow:inset 3px 0 0 var(--ac)}
+.ic{font-size:1.35rem;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.pane{transition:border-color .25s,box-shadow .25s}
+.pane.on{box-shadow:inset 0 3px 14px -10px var(--ac)}
+.tb{backdrop-filter:blur(10px);background:rgba(16,18,21,.88)}
+dialog{border:1px solid var(--bd);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+dialog[open]{animation:pop .24s cubic-bezier(.2,.9,.3,1.15)}
+dialog::backdrop{background:rgba(0,0,0,.5);backdrop-filter:blur(5px);animation:fade .2s}
+#toast{transition:transform .25s cubic-bezier(.2,.9,.3,1.2),opacity .2s}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}}
+.list{scrollbar-width:thin;scrollbar-color:#3a3f47 transparent}
+@media (prefers-reduced-motion:reduce){*,::backdrop{animation:none!important;transition:none!important}}
