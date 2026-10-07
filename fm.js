@@ -108,6 +108,7 @@ const FM = (() => {
     d.showModal();
   });
   const openFile = async p => {
+    if (window.FMX?.open(p, fsx, !!nat, toast)) return;
     if (isBinary(p)) return toast('Tệp nhị phân — không xem được');
     try { const t = String(await fsx.read(p, 2e5)).slice(0, 2e5); if (t.includes('\0')) return toast('Tệp nhị phân — không xem được'); $('vT').textContent = p; $('vB').textContent = t; $('view').showModal(); } catch (e) { toast(e.message); }
   };
@@ -275,9 +276,12 @@ const FM = (() => {
   $('vCopy').onclick = async () => toast((await copy($('vB').textContent)) ? 'Đã sao chép' : 'Không thể sao chép');
 
   // Terminal (Shell trên cùng hệ tệp ảo) · Nhập tệp/zip/thư mục vào /sdcard/workspace
+  let linking = null; // trong APK: tự nối Termux thật (WXT.start bật bridge), không còn dừng ở shell ảo
+  const linkReal = () => (window.WXT && !sh.bridge?.on && !linking) ? (linking = sh.submit('bridge connect').catch(x => sh.write(`\x1b[31m${x.message || x}\x1b[0m\n`)).finally(() => { linking = null; })) : null;
   const openTerm = () => {
     if (fsx === virt) sh.cwd = S[act].path;
-    if (!$('term').childElementCount) sh.write('\x1b[32mTermux-core\x1b[0m · gõ \x1b[33mhelp\x1b[0m\n');
+    if (!$('term').childElementCount) sh.write(window.WXT ? '\x1b[32mWorkspace X\x1b[0m · Termux thật (Node.js trong app) · \x1b[33mhelp\x1b[0m\n' : '\x1b[32mTermux-core ảo\x1b[0m · gõ \x1b[33mhelp\x1b[0m\n');
+    linkReal();
     $('termDlg').showModal(); $('cmd').focus();
   };
   $('termDlg').onclose = refresh;
@@ -301,6 +305,7 @@ const FM = (() => {
   };
 
   load(0, fsx.root, false); load(1, fsx.root, false);
+  if (window.WXT) setTimeout(linkReal, 600); // nối sẵn lõi Termux ngay khi mở app
   if (!nat) toast('Chưa có WXFS — đang dùng bộ nhớ ảo');
   return { S, fsx, refresh };
 })();
