@@ -36,7 +36,7 @@ class Bridge {
 }
 
 const api = {
-  // bridge connect [token] [url=ws://127.0.0.1:8765] (trong APK không cần token: tự bật bridge trong Termux) · bridge off · bridge status
+  // bridge connect [token] [url=ws://127.0.0.1:8765] (trong APK không cần token: tự bật bridge trong Termux) · bridge off · bridge termux (mở terminal Termux đầy đủ) · bridge status
   async bridge(c, [sub = 'status', token = '', url = 'ws://127.0.0.1:8765']) {
     const sh = c.sh;
     if (sub === 'connect') {
@@ -57,12 +57,14 @@ const api = {
       c.out('Đã nối Termux thật. "bridge off" để về shell ảo · ^D gửi EOF cho lệnh đang chạy.\n');
     }
     else if (sub === 'off') { sh.bridge?.close(); c.out('Đã về shell ảo.\n'); }
+    else if (sub === 'termux') { if (!window.WXT?.openTermux) throw new Error('chỉ có trong APK'); WXT.openTermux(); c.out('Đang mở terminal Termux đầy đủ (vim, nano, python…).\n'); }
     else c.out(`bridge: ${sh.bridge?.on ? 'ON' : 'OFF'}\n`);
   },
   pkg: c => { c.err('pkg: shell ảo không cài gói. Dùng "bridge connect <token>" để chạy Termux thật.\n'); return 1; },
   apt: (c, a) => api.pkg(c, a),
 
   'termux-setup-storage'(c) { ['shared', 'downloads', 'documents'].forEach(d => c.vfs.mkdir(`${c.env.HOME}/storage/${d}`, true)); c.out('Đã tạo ~/storage/{shared,downloads,documents}\n'); },
+  'termux-terminal'() { if (!window.WXT?.openTermux) throw new Error('termux-terminal: chỉ có trong ứng dụng'); WXT.openTermux(); }, // mở terminal Termux đầy đủ (vim, nano…)
   'termux-info': c => c.out(`Termux-core ảo\nUA: ${navigator.userAgent}\nOnline: ${navigator.onLine}\n`),
   async 'termux-clipboard-get'(c) { c.out(await navigator.clipboard.readText()); },
   async 'termux-clipboard-set'(c, a) { await navigator.clipboard.writeText(a.join(' ') || c.stdin); },
