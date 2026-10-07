@@ -1,0 +1,33 @@
+name: Build Workspace X
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gộp web vào assets
+        run: python3 build.py
+
+      - name: Vá AndroidManifest
+        run: python3 patch_manifest.py
+
+      - name: Build APK (debug)
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: workspace-x-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
