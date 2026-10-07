@@ -12,10 +12,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.view.Gravity;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -39,16 +41,30 @@ public class WorkspaceActivity extends Activity {
   private WebView web;
   private boolean asked;
 
-  @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
+  private static boolean ready() { return new File(PREFIX + "/bin/bash").exists(); }
+
   @Override protected void onCreate(Bundle b) {
     super.onCreate(b);
-    // Chưa có môi trường Termux (lần chạy đầu) → để TermuxActivity cài bootstrap trước.
-    if (!new File(PREFIX + "/bin/bash").exists()) {
-      Toast.makeText(this, "Lần đầu: đang cài môi trường Termux. Xong hãy mở lại Workspace X.", Toast.LENGTH_LONG).show();
-      startActivity(new Intent(this, TermuxActivity.class));
-      finish();
-      return;
-    }
+    if (ready()) { init(); return; }
+    // Lần đầu: để TermuxActivity cài bootstrap. Bấm Back khi xong là quay lại đây và giao diện tự nạp (onResume).
+    waiting();
+    Toast.makeText(this, "Lần đầu: đang cài môi trường Termux. Xong bấm Back để vào Workspace X.", Toast.LENGTH_LONG).show();
+    startActivity(new Intent(this, TermuxActivity.class));
+  }
+
+  private void waiting() {
+    TextView t = new TextView(this);
+    t.setText("Môi trường Termux chưa cài xong.\n\nChạm để mở trình cài đặt.");
+    t.setTextColor(0xFFE6E8EB);
+    t.setTextSize(16);
+    t.setGravity(Gravity.CENTER);
+    t.setBackgroundColor(0xFF0E1013);
+    t.setOnClickListener(v -> startActivity(new Intent(this, TermuxActivity.class)));
+    setContentView(t);
+  }
+
+  @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
+  private void init() {
     // Giữ tiến trình app sống khi chuyển nền (dịch vụ nền của chính Termux). Lỗi cũng không sao.
     try { startService(new Intent(this, TermuxService.class)); } catch (Exception ignored) { }
 
@@ -75,7 +91,7 @@ public class WorkspaceActivity extends Activity {
 
   @Override protected void onResume() {
     super.onResume();
-    if (web == null) return;
+    if (web == null) { if (ready()) init(); else return; }
     boolean ok;
     if (Build.VERSION.SDK_INT >= 30) ok = Environment.isExternalStorageManager();
     else if (Build.VERSION.SDK_INT >= 23) ok = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
